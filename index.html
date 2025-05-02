@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TayRep</title>
+    <!-- 主样式 -->
+    <!-- 在<style>标签内添加或修改以下CSS样式 -->
+    <style>
+        /* 全局变量 */
+        :root {
+            --primary-color: #2c3e50; /* 品牌色 - 深蓝 */
+            --bg-color: #f8f9fa;
+        }
+
+        /* 通用样式 */
+        body {
+            background: #f5f3ee;
+            color: #6e6259;
+            font-family: 'Roboto', sans-serif;
+            transition: background 0.5s;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        @keyframes flowing-bg {
+            0% {background-position: 0% 50%;}
+            25% {background-position: 50% 100%;}
+            50% {background-position: 100% 50%;}
+            75% {background-position: 50% 0%;}
+            100% {background-position: 0% 50%;}
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            left: 0; top: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+            background: url('https://www.transparenttextures.com/patterns/noise.png');
+        }
+        .container, .section-padding, nav, footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-padding {
+            padding: 5rem 1rem;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background-color: rgba(255,255,255,0.7);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            justify-content: center !important;
+        }
+        @font-face {
+            font-family: 'Somer';
+            src: url('Somer.ttf') format('truetype');
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'TaytexAlt';
+            src: url('Taytex Alt.ttf') format('truetype');
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'IMFePIrm28P';
+            src: url('IMFePIrm28P.ttf') format('truetype');
+            font-display: swap;
+        }
+        .navbar .navbar-brand {
+            margin: 0 auto;
+            font-family: 'Somer', cursive, 'Roboto', sans-serif !important;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+        .navbar .container {
+            position: relative;
+        }
+        .navbar-toggler {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        /* 图片瀑布流 */
+        .masonry {
+            column-count: 4;
+            column-gap: 1rem;
+        }
+        @media (max-width: 1200px) {
+            .masonry { column-count: 3; }
+        }
+        @media (max-width: 992px) {
+            .masonry { column-count: 2; }
+        }
+        @media (max-width: 768px) {
+            .masonry { column-count: 3; }
+            .card-img-top {
+                height: 100px !important;
+                object-fit: cover;
+            }
+        }
+        /* 修改：让整个卡片（包括图片和文字）一起放大，并确保不会挡住其他内容 */
+        .masonry .card {
+            margin-bottom: 1rem;
+            break-inside: avoid;
+            transition: transform 0.3s cubic-bezier(.4,2,.6,1);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .masonry .card:hover {
+            transform: scale(1.08);
+            z-index: 10; /* 提高悬停时的z-index，确保显示在其他卡片上方 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* 添加阴影增强视觉效果 */
+        }
+        
+        /* 确保卡片内容不会被裁剪 */
+        .masonry .card-body {
+            position: relative;
+            background: white; /* 确保文字背景色与卡片一致 */
+        }
+        
+        /* 图片悬停效果改为作用于整个卡片，而不是单独的图片 */
+        .card-img-top,
+        .rounded-circle,
+        #album-cover {
+            transition: transform 0.3s cubic-bezier(.4,2,.6,1);
+        }
+        
+        /* 移除单独图片的放大效果，改为整个卡片放大 */
+        /* 
+        .card-img-top:hover,
+        .rounded-circle:hover,
+        #album-cover:hover {
+            transform: scale(1.08);
+        }
+        */
+        
+        /* 添加图片圆角效果 */
+        .masonry .card-img-top {
+            /* 移除圆角效果 */
+            /* border-radius: 12px; */
+            overflow: hidden;
+        }
+
+        /* 商品、视频、官方照片等图片在手机端三列显示 */
+        @media (max-width: 768px) {
+            /* 热销商品一行一张 */
+            #products .row-cols-md-3 > .col {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            /* 其他图片三列显示 */
+            #videos .row-cols-md-3 > .col,
+            #video-photo-list .col {
+                flex: 0 0 33.3333%;
+                max-width: 33.3333%;
+            }
+            /* 热销商品图片保持原比例 */
+            #products .card-img-top {
+                height: auto !important;
+                max-width: 100%;
+                object-fit: contain;
+            }
+            /* 其他图片缩略图依然小尺寸 */
+            #videos .card-img-top, #video-photo-list .card-img-top {
+                height: 100px;
+                object-fit: cover;
+            }
+            .rounded-circle {
+                width: 36px !important;
+                height: 36px !important;
+            }
+        }
+
+        /* 音乐播放区 */
+        .music-player {
+            border-left: 1px solid #eee;
+            padding-left: 2rem;
+        }
+        .lyrics {
+            height: 150px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            color: rgba(0,0,0,0.6);
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(5px);
+        }
+
+        /* 时间轴 */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background-color: #eee;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+        }
+        .timeline-item {
+            padding: 1rem 4rem;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            background-color: var(--primary-color);
+            border: 4px solid white;
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        @media (max-width: 768px) {
+            .timeline-item {
+                width: 100%;
+                padding-left: 2rem;
+            }
+            .timeline-item::after {
+                left: -10px;
+            }
+        }
+
+        /* 商品图悬停切换 */
+        .product-image {
+            position: relative;
+            overflow: hidden;
+        }
+        .product-image img {
+            transition: transform 0.3s ease;
+        }
+        .product-image:hover img {
+            transform: scale(1.1);
+        }
+
+        /* 新增：所有图片悬停放大效果 */
+        .card-img-top,
+        .rounded-circle,
+        #album-cover {
+            transition: transform 0.3s cubic-bezier(.4,2,.6,1);
+        }
+        .card-img-top:hover,
+        .rounded-circle:hover,
+        #album-cover:hover {
+            transform: scale(1.08);
+        }
+
+        /* 视频作品和关于我栏目半透明背景 */
+        #videos, #official {
+            background: rgba(255,255,255,0.7);
+            border-radius: 24px;
+            box-shadow: 0 4px 32px 0 rgba(140, 140, 200, 0.10);
+            backdrop-filter: blur(2px);
+        }
+
+        /* 音乐封面图片大小限制 */
+        .music-player #album-cover {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        .list-group-item img.rounded-circle {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+        }
+
+        /* 视频作品图片比例统一 */
+        #video-photo-list .video-img {
+            width: 100%;
+            max-width: 220px;
+            height: auto;
+            max-height: 320px;
+            object-fit: contain;
+            background: #f5f3ee;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+            transition: transform 0.3s cubic-bezier(.4,2,.6,1);
+        }
+        #video-photo-list .video-img:hover {
+            transform: scale(1.06);
+        }
+
+        /* 筛选按钮样式优化 */
+        .d-flex.justify-content-center.mb-4 {
+            gap: 1rem;
+        }
+        [data-filter-btn] {
+            margin: 0;
+            box-shadow: none;
+            transition: box-shadow 0.35s cubic-bezier(.4,1.6,.6,1), transform 0.35s cubic-bezier(.4,1.6,.6,1);
+        }
+        [data-filter-btn]:hover {
+            box-shadow: 0 8px 32px 0 rgba(140, 140, 200, 0.16);
+            transform: translateY(-7px) scale(1.08);
+            z-index: 2;
+        }
+        .btn.active[data-filter-btn] {
+            background: #d1d5db !important;
+            color: #111 !important;
+        }
+
+        /* 赞赏按钮样式 */
+        .appreciate-btn {
+            background: transparent;
+            border: 1px solid #bfa14a;
+            color: #bfa14a;
+            padding: 5px 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* 语言切换按钮样式 */
+        .language-selector {
+            position: static;
+            right: auto;
+            top: auto;
+            transform: none;
+            z-index: 1000;
+        }
+        .language-selector .dropdown-toggle {
+            background: transparent;
+            border: 1px solid #bfa14a;
+            color: #bfa14a;
+            padding: 5px 15px;
+            font-size: 14px;
+            /* 添加垂直对齐样式 */
+            display: flex;
+            align-items: center;
+        }
+        .language-selector .dropdown-toggle:hover {
+            background: rgba(191, 161, 74, 0.1);
+        }
+        .language-selector .dropdown-menu {
+            min-width: 120px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+        }
+        .language-selector .dropdown-item {
+            font-size: 14px;
+            padding: 8px 15px;
+            color: #6e6259;
+        }
+        .language-selector .dropdown-item:hover {
+            background: rgba(191, 161, 74, 0.1);
+            color: #bfa14a;
+        }
+        @media (max-width: 768px) {
+            .language-selector {
+                position: absolute;
+                right: 70px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            /* 修改赞赏按钮的移动端样式，将其放置在logo左侧 */
+            .navbar .btn.me-2 {
+                position: absolute;
+                left: 10px; /* 改为left定位，放在左侧 */
+                top: 50%;
+                transform: translateY(-50%);
+                padding: 3px 10px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #music .container.d-flex {
+                flex-direction: column !important;
+                gap: 2rem;
+            }
+            #music .col-md-6, #music .music-player {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-bottom: 1.5rem;
+            }
+            #music .music-player {
+                border-left: none;
+                padding-left: 0;
+            }
+        }
+    </style>
+    <!-- 引入 Bootstrap 和 Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- 引入手写风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<body style="background: #f5f3ee; color: #6e6259; min-height: 100vh;">
+
+  <!-- ====== 导航栏 ====== -->
+<nav class="navbar navbar-expand-lg navbar-light sticky-top">
+  <div class="container position-relative d-flex align-items-center">
+    <a class="navbar-brand" href="#">TayRep</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#home" data-i18n="home">首页</a>
+        </li>
+        <!-- 新しいメニュー項目を追加 -->
+        <li class="nav-item">
+          <a class="nav-link" href="#biography" data-i18n="biography">泰勒斯威夫特简介</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#photos" data-i18n="photos">官方照片</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#videos" data-i18n="videos">视频作品</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#music" data-i18n="music">音乐作品</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="store.html" data-i18n="store" target="_blank">商店</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#footer" data-i18n="followMe">Follow me</a>
+        </li>
+      </ul>
+    </div>
+    <!-- 右侧按钮区域 -->
+    <div class="d-flex align-items-center">
+      <!-- 赞赏按钮 -->
+      <button class="btn me-2 appreciate-btn" type="button" data-bs-toggle="modal" data-bs-target="#appreciateModal">
+        <i class="fas fa-heart"></i> 赞赏
+      </button>
+      <!-- 语言切换按钮 -->
+      <div class="dropdown language-selector">
+        <button class="btn dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-globe"></i> 语言
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+          <li><a class="dropdown-item" href="#" data-lang="zh">简体中文</a></li>
+          <li><a class="dropdown-item" href="#" data-lang="en">English</a></li>
+          <li><a class="dropdown-item" href="#" data-lang="ja">日本語</a></li>
+          <li><a class="dropdown-item" href="#" data-lang="ko">한국어</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- 赞赏模态框 -->
+<div class="modal fade" id="appreciateModal" tabindex="-1" aria-labelledby="appreciateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background-color: rgba(255,255,255,0.95); border-radius: 16px;">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="appreciateModalLabel" style="color: #bfa14a; font-family: 'Somer', cursive, sans-serif;">感谢您的赞赏</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>如果您喜欢我们的内容，可以通过以下方式支持我们</p>
+        <div class="row mt-4">
+          <div class="col-6">
+            <img src="微信赞赏码.JPG" alt="微信赞赏码" class="img-fluid rounded" style="max-height: 200px;">
+            <p class="mt-2">微信赞赏码</p>
+          </div>
+          <div class="col-6">
+            <img src="支付宝支付.jpg" alt="支付宝支付" class="img-fluid rounded" style="max-height: 200px;">
+            <p class="mt-2">支付宝支付</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: rgba(191, 161, 74, 0.1); color: #bfa14a; border: 1px solid #bfa14a;">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- ====== 首页Banner ====== -->
+<header class="main-banner" style="width:100vw; min-height:30vw; max-height:30vh; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; background:none; padding-top:6vw; padding-bottom:3vw;">
+  <div style="position:relative; z-index:2; text-align:center; width:100%;">
+    <h1 style="font-family:'Somer',cursive,sans-serif; font-size:3.2rem; color:#bfa14a; letter-spacing:3px; margin-bottom:1rem; text-shadow:0 2px 16px #fffbe6;">TayRep</h1>
+    <p style="font-size:1.3rem; color:#bfa14a; letter-spacing:1px; font-family:'TaytexAlt', serif;">(Taylor's Version)</p>
+    <div id="lyric-anim" style="margin-top:2.2rem; min-height:3.2rem; font-size:1.15rem; color:#bfa14a; font-family:'IMFePIrm28P', serif; letter-spacing:1px; text-align:center; white-space:pre-line;"></div>
+  </div>
+</header>
+
+<!-- ====== 泰勒斯威夫特简介 ====== -->
+<section id="biography" class="section-padding">
+  <div class="container">
+    <h2 class="text-center mb-5" data-i18n="biographyTitle">泰勒斯威夫特简介</h2>
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-4 mb-md-0">
+        <img src="霉霉.png" alt="泰勒斯威夫特" class="img-fluid rounded shadow-sm">
+      </div>
+      <div class="col-md-8">
+        <p data-i18n="biographyP1">泰勒・斯威夫特（Taylor Swift），1989 年 12 月 13 日出生于美国宾夕法尼亚州，是全球知名的美国歌手、词曲作者、音乐制作人及演员，以极具叙事性的歌词和风格多样的音乐创作闻名。</p>
+        <p data-i18n="biographyP2">早期，泰勒以乡村音乐出道，凭借《Tim McGraw》《Love Story》等作品迅速走红，成为乡村音乐领域的新星。2014 年，她发行专辑《1989》，正式转型流行音乐，展现了强大的风格驾驭能力。她的音乐常基于个人经历，细腻描绘情感、成长与生活，如《Shake It Off》《Blank Space》等热门单曲，既展现了流行音乐的活力，又不失深刻的情感表达。</p>
+        <p data-i18n="biographyP3">在音乐成就上，泰勒是格莱美奖的常客，截至 2024 年，她共斩获 12 座格莱美奖，其中三次获得 "年度专辑" 这一重磅奖项，成为该奖项历史上首位三次获此殊荣的女艺人。她的专辑全球销量超数千万张，单曲频繁登顶美国公告牌（Billboard）排行榜，拥有《Anti-Hero》等多首冠军单曲。</p>
+        <p data-i18n="biographyP4">除音乐外，泰勒还积极参与公益，关注教育、LGBTQ + 权益等议题，以自身影响力传递正能量。她的巡回演唱会场场爆满，票房成绩斐然，如 "The Eras Tour" 刷新多项纪录。从乡村到流行，泰勒・斯威夫特不断突破创新，用音乐讲述故事，成为当代音乐界极具影响力的标志性人物，持续在全球范围内引领音乐潮流。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- ====== 图片区 ====== -->
+<section id="photos" class="section-padding">
+    <div class="container">
+        <h2 class="text-center mb-4" data-i18n="photosTitle">官方照片</h2>
+        <!-- 筛选标签 -->
+        <div class="d-flex justify-content-center mb-4">
+            <button class="btn btn-light active" data-filter-btn="all" data-i18n="filterAll">全部</button>
+            <button class="btn btn-light" data-filter-btn="street" data-i18n="filterStreet">街拍</button>
+            <button class="btn btn-light" data-filter-btn="album" data-i18n="filterAlbum">专辑</button>
+            <button class="btn btn-light" data-filter-btn="tour" data-i18n="filterTour">巡演</button>
+        </div>
+        <!-- 瀑布流图片 -->
+        <div class="masonry">
+            <div class="card" data-filter="album">
+                <a href="https://www.123865.com/s/8C85Vv-4bqAH" target="_blank">
+                    <img src="专辑.jpg" class="card-img-top" alt="专辑">
+                </a>
+                <div class="card-body p-2">
+                    <h6 data-i18n="albumText">专辑</h6>
+                </div>
+            </div>
+            <div class="card" data-filter="street">
+                <a href="https://www.123865.com/s/8C85Vv-pbqAH" target="_blank">
+                    <img src="街拍.png" class="card-img-top" alt="街拍">
+                </a>
+                <div class="card-body p-2">
+                    <h6 data-i18n="streetText">街拍</h6>
+                </div>
+            </div>
+            <div class="card" data-filter="tour">
+                <a href="https://www.123865.com/s/8C85Vv-xbqAH" target="_blank">
+                    <img src="巡演.png" class="card-img-top" alt="巡演">
+                </a>
+                <div class="card-body p-2">
+                    <h6 data-i18n="tourText">巡演</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+  <!-- ====== 视频区 ====== -->
+<section id="videos" class="section-padding">
+    <div class="container">
+        <h2 class="text-center mb-4" data-i18n="videosTitle">视频作品</h2>
+        <div class="row justify-content-center gap-0" id="video-photo-list">
+            <div class="col-4 col-md-3 col-lg-2 mb-4">
+                <a href="https://www.123865.com/s/8C85Vv-fbqAH" target="_blank">
+                    <img src="爱的告白.JPG" class="video-img" alt="视频图片1">
+                </a>
+            </div>
+            <div class="col-4 col-md-3 col-lg-2 mb-4">
+                <a href="https://www.123865.com/s/8C85Vv-fbqAH" target="_blank">
+                    <img src="1989.JPG" class="video-img" alt="视频图片2">
+                </a>
+            </div>
+            <div class="col-4 col-md-3 col-lg-2 mb-4">
+                <a href="https://www.123865.com/s/8C85Vv-fbqAH" target="_blank">
+                    <img src="举世盛名.JPG" class="video-img" alt="视频图片3">
+                </a>
+            </div>
+            <div class="col-4 col-md-3 col-lg-2 mb-4">
+                <a href="https://www.123865.com/s/8C85Vv-fbqAH" target="_blank">
+                    <img src="恋人之城.JPG" class="video-img" alt="视频图片4">
+                </a>
+            </div>
+            <div class="col-4 col-md-3 col-lg-2 mb-4">
+                <a href="https://www.123865.com/s/8C85Vv-fbqAH" target="_blank">
+                    <img src="美利坚女士.JPG" class="video-img" alt="视频图片5">
+                </a>
+            </div>
+            <div class="col-4 col-md-3 col-lg-2 mb-4">
+                <a href="https://www.123865.com/s/8C85Vv-fbqAH" target="_blank">
+                    <img src="时代巡回.JPG" class="video-img" alt="视频图片6">
+                </a>
+            </div>
+            <div class="col-4 col-md-3 col-lg-2 mb-4">
+                <a href="https://www.123865.com/s/8C85Vv-fbqAH" target="_blank">
+                    <img src="无畏之旅.JPG" class="video-img" alt="视频图片7">
+                </a>
+            </div>
+            <div class="col-4 col-md-3 col-lg-2 mb-4">
+                <a href="https://www.123865.com/s/8C85Vv-fbqAH" target="_blank">
+                    <img src="长池录音室.JPG" class="video-img" alt="视频图片8">
+                </a>
+            </div>
+            <div class="col-4 col-md-3 col-lg-2 mb-4">
+                <a href="https://www.123865.com/s/8C85Vv-BbqAH" target="_blank">
+                    <img src="更多.png" class="video-img" alt="视频图片9">
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+  <!-- ====== 音乐区 ====== -->
+<section id="music" class="section-padding">
+    <div class="container d-flex flex-wrap">
+        <!-- 歌曲列表 -->
+        <div class="col-md-6">
+            <h2 class="mb-4" data-i18n="musicTitle">音乐作品</h2>
+            <div class="list-group">
+                <div class="list-group-item d-flex align-items-center">
+                    <img src="IMG_5149.JPG" class="rounded-circle me-3" alt="专辑封面">
+                    <div>
+                        <h6>I Can Do It With a Broken Heart</h6>
+                        <small class="text-muted">Taylor Swift | 3:38</small>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a href="https://www.123865.com/s/8C85Vv-YbqAH" target="_blank" class="btn btn-outline-primary" data-i18n="moreMusic">更多音乐</a>
+            </div>
+        </div>
+        <!-- 播放控制区 -->
+        <div class="col-md-6 music-player">
+            <h2 class="mb-4" data-i18n="nowPlaying">正在播放</h2>
+            <div class="d-flex align-items-center mb-3">
+                <img src="IMG_5149.JPG" class="rounded-circle me-4" alt="专辑封面" id="album-cover">
+                <div>
+                    <h4 id="song-title">I Can Do It With a Broken Heart</h4>
+                    <small>Taylor Swift</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+                <button class="btn btn-primary btn-lg me-3" id="play-pause">
+                    <i class="fas fa-play"></i>
+                </button>
+                <input type="range" class="form-range flex-grow-1" id="progress-bar" min="0" max="100" value="0">
+            </div>
+            <audio id="audio-player" src="13-I Can Do It With a Broken Heart.mp3"></audio>
+            <!-- 歌词区 -->
+            <div class="lyrics p-3 rounded" id="lyrics-box" style="height: 180px; overflow-y: auto;"></div>
+        </div>
+    </div>
+</section>
+
+  <!-- ====== 底部社交媒体 ====== -->
+<footer class="bg-white p-4" id="footer">
+    <div class="container text-center">
+        <!-- 社交媒体链接 -->
+        <div class="mb-3">
+            <h5 data-i18n="footerFollow">Follow Me</h5>
+            <div class="d-flex justify-content-center">
+                <a href="https://u.wechat.com/EKi1fQ2shrYocA2MY4GfEyg?s=2" class="btn btn-light m-1" target="_blank" title="微信">
+                    <i class="fab fa-weixin"></i>
+                </a>
+                <a href="https://www.instagram.com/ooz.charles?igsh=MTM4NXFsOTE5M3NtMw%3D%3D&utm_source=qr" class="btn btn-light m-1" target="_blank" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://youtube.com/@tayrep1213?si=1q-eWGIiiLUw-U8Z" class="btn btn-light m-1" target="_blank" title="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://x.com/oliviabrow73120?s=21" class="btn btn-light m-1" target="_blank" title="X(Twitter)">
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+                <a href="https://www.tiktok.com/@tayrep1213?_t=ZS-8vqqoBYEi2O&_r=1" class="btn btn-light m-1" target="_blank" title="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+                <a href="https://v.douyin.com/jIkWAuX_0AU/" class="btn btn-light m-1" target="_blank" title="抖音">
+                    <i class="fas fa-music"></i>
+                </a>
+                <a href="https://www.xiaohongshu.com/user/profile/60aa45af000000000100a1f3?xsec_token=YBxMwgJjbkayGsFH9Fs8ZWEbf_YB5n6p7Z17KLTm5-U9Q=&xsec_source=app_share&xhsshare=CopyLink&appuid=60aa45af000000000100a1f3&apptime=1745659374&share_id=e5518a7b725f48b3bccc50725a3e5dde" class="btn btn-light m-1" target="_blank" title="小红书">
+                    <i class="fas fa-book"></i>
+                </a>
+                <a href="https://b23.tv/7T7mmVm" class="btn btn-light m-1" target="_blank" title="哔哩哔哩">
+                    <i class="fas fa-tv"></i>
+                </a>
+            </div>
+        </div>
+        <div>
+            <a href="#" style="color:#bfa14a;font-weight:bold;">TS官链</a>
+        </div>
+        <div class="mt-2" style="color:#aaa; font-size: 15px;">
+            © 2025 TayRep All Rights Reserved.
+        </div>
+        <div class="mt-1">
+            <a href="disclaimer.html" style="color:#aaa; font-size: 14px;">免责声明</a>
+        </div>
+    </div>
+</footer>
+
+  <!-- ====== 图片灯箱（如需可用） ====== -->
+<div class="modal fade" id="imageModal">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content bg-black">
+            <div class="modal-body d-flex justify-content-center align-items-center">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <img src="" class="img-fluid" id="modal-image">
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- ====== JavaScript（功能脚本） ====== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 自动更新最后更新日期
+    // document.getElementById('update-date').textContent = '2025年4月26日'; // 可替换为动态获取
+
+    // 官方照片筛选功能
+    document.querySelectorAll('[data-filter-btn]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('[data-filter-btn]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const filter = this.getAttribute('data-filter-btn');
+            document.querySelectorAll('.masonry .card').forEach(card => {
+                if (filter === 'all' || card.getAttribute('data-filter') === filter) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // 音乐播放控制（支持进度条）
+    const playPauseBtn = document.getElementById('play-pause');
+    const albumCover = document.getElementById('album-cover');
+    const audio = document.getElementById('audio-player');
+    const progressBar = document.getElementById('progress-bar');
+    let isPlaying = false;
+
+    playPauseBtn.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play();
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            albumCover.style.animation = 'rotate 3s linear infinite';
+        } else {
+            audio.pause();
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            albumCover.style.animation = 'none';
+        }
+    });
+
+    // 音频进度条同步
+    audio.addEventListener('timeupdate', () => {
+        if (!isNaN(audio.duration)) {
+            progressBar.value = (audio.currentTime / audio.duration) * 100;
+        }
+    });
+    // 拖动进度条
+    progressBar.addEventListener('input', () => {
+        if (!isNaN(audio.duration)) {
+            audio.currentTime = (progressBar.value / 100) * audio.duration;
+        }
+    });
+    // 播放结束后重置
+    audio.addEventListener('ended', () => {
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        albumCover.style.animation = 'none';
+        progressBar.value = 0;
+    });
+
+    // ====== 歌词滚动与高亮 ======
+    // LRC歌词内容
+    const lrc = `
+[00:00.00]I Can Do It With a Broken Heart - Taylor Swift (泰勒·斯威夫特)
+[00:08.60]   
+[00:08.60]I can read your mind
+[00:15.88]我懂你内部的想法
+[00:15.88]"She's having the time of her life"
+[00:23.44]"她正享受生活中的美好时光"
+[00:23.44]There in her glittering prime
+[00:25.36]她正处在生命中光辉灿烂的时期
+[00:25.36]The lights refract sequin stars
+[00:28.17]她饰满亮片的衣裙折射出的熠熠星光
+[00:28.17]Off her silhouette every night
+[00:31.06]缀亮黑夜中她的身影
+[00:31.06]I can show you lies
+[00:37.51]我会让你们明白那些臆想有多离谱
+[00:37.51]'Cause I'm a real tough kid
+[00:39.63]因为我是个真正要强的孩子
+[00:39.63]I can handle it
+[00:41.23]我可以照顾好自己
+[00:41.23]They said "Babe you gotta fake it 'til you make it"
+[00:43.99]他们对我说 "宝贝 你要装作自信满满 直到最终的成功"
+[00:43.99]And I did
+[00:45.22]而我也确实做到了
+[00:45.22]Lights camera and smile
+[00:46.90]灯光准备 摄像就位 来笑一个
+[00:46.90]Even when you want to die
+[00:48.98]即便你不想活了 仍然要保持微笑
+[00:48.98]He said he'd love me all his life
+[00:52.65]他说他会爱我一辈子
+[00:52.65]But that life was too short
+[00:54.30]但那段时光太短暂了
+[00:54.30]Breaking down I hit the floor
+[00:56.19]令人崩溃了 我倒在地上 沮丧不已
+[00:56.19]All the pieces of me shattered
+[00:57.91]我整个人支离破碎
+[00:57.91]As the crowd was chanting "More"
+[00:59.93]就在人群响起一声"再来"的时候
+[00:59.93]I was grinning like I'm winning
+[01:01.67]我面带笑容 仿佛正赢得胜利
+[01:01.67]I was hitting my marks
+[01:04.24]我在努力实现自己的目标
+[01:04.24]'Cause I can do it with a broken heart
+[01:09.17]因为即使心碎满地 我也相信自己可以做到
+[01:09.17]I'm so depressed I act like it's my birthday
+[01:13.52]我感到非常沮丧 每天却还要假装像过生日一样
+[01:13.52]Every day
+[01:16.71]每天如此
+[01:16.71]I'm so obsessed with him but he avoids me
+[01:20.82]我对他执着不放 但他却像瘟疫一样
+[01:20.82]Like the plague
+[01:24.03]避着我
+[01:24.03]I cry a lot but I am so productive
+[01:28.23]尽管 interior得到痛苦 但我仍能够保持高度的工作效率
+[01:28.23]It's an art
+[01:31.53]这是一门艺术
+[01:31.53]You know you're good when you can even do it with a broken heart
+[01:37.26]当你心如刀割却依然坚持下去时 就知道有多了不起了
+[01:37.26]I can hold my breath
+[01:44.47]如同窒息般的痛苦
+[01:44.47]I've been doing it since he left
+[01:51.35]自从他离开后 我一直在忍受这种感受
+[01:51.35]I keep finding his things in drawers
+[01:54.05]我一直在抽屉里翻找他的东西
+[01:54.05]Crucial evidence I didn't imagine the whole thing
+[01:58.36]发现了一些重要的线索 整件事情并非我凭空捏造
+[01:58.36]I'm sure I can pass this test
+[02:06.09]我相信我能通过这个考验
+[02:06.09]'Cause I'm a real tough kid
+[02:08.28]因为我是个真正要强的孩子
+[02:08.28]I can handle it
+[02:09.93]我可以照顾好自己
+[02:09.93]They said "Babe you gotta fake it 'til you make it"
+[02:12.77]他们对我说 "宝贝 你要装作自信满满 直到最终的成功"
+[02:12.77]And I did
+[02:13.73]而我也确实做到了
+[02:13.73]Lights camera and smile
+[02:15.48]灯光准备 摄像就位 来笑一个
+[02:15.48]In stilettos for miles
+[02:17.58]穿着细高跟 我健步如飞
+[02:17.58]He said he'd love me for all time
+[02:21.19]他说他会爱我一辈子
+[02:21.19]But that time was quite short
+[02:22.87]但那段时光太短暂了
+[02:22.87]Breaking down I hit the floor
+[02:24.76]令人崩溃了 我倒在地上 沮丧不已
+[02:24.76]All the pieces of me shattered
+[02:26.52]我这个人支离破碎
+[02:26.52]As the crowd was chanting "More"
+[02:28.38]就在人群响起一声"再来"的时候
+[02:28.38]I was grinning like I'm winning
+[02:30.17]我面带笑容 仿佛正赢得胜利
+[02:30.17]I was hitting my marks
+[02:32.85]我在努力实现自己的目标
+[02:32.85]'Cause I can do it with a broken heart
+[02:37.86]因为即使心碎满地 我也相信自己可以做到
+[02:37.86]I'm so depressed I act like it's my birthday
+[02:42.09]我感到非常沮丧 每天却还要假装像过生日一样
+[02:42.09]Every day
+[02:45.37]每天如此
+[02:45.37]I'm so obsessed with him but he avoids me
+[02:49.56]我对他执着不放 但他却像瘟疫一样
+[02:49.56]Like the plague
+[02:52.65]避着我
+[02:52.65]I cry a lot but I am so productive
+[02:56.84]尽管 interior得到痛苦 但我仍能够保持高度的工作效率
+[02:56.84]It's an art
+[02:59.99]这是一门艺术
+[02:59.99]You know you're good when you can even do it with a broken heart
+[03:07.52]当你心如刀割却依然坚持下去时 就知道有多了不起了
+[03:07.52]You know you're good when you can even do it with a broken heart
+[03:14.95]当你心如刀割却依然坚持下去时 就知道有多了不起了
+[03:14.95]You know you're good and I'm good
+[03:23.44]你清楚你我有多么了不起
+[03:23.44]'Cause I'm miserable
+[03:26.89]因为我饱受磨难
+[03:26.89]And nobody even knows
+[03:33.08]但是无人清楚
+[03:33.08]Try and come for my job
+[03:38.008]来试试我的经历吧
+[03:38.008]
+`;
+    // 解析LRC
+    function parseLRC(lrc) {
+        const lines = lrc.split('\n');
+        const result = [];
+        const timeExp = /\[(\d{2}):(\d{2}\.\d{2,3})\]/;
+        for (let line of lines) {
+            const match = timeExp.exec(line);
+            if (match) {
+                const min = parseInt(match[1]);
+                const sec = parseFloat(match[2]);
+                const time = min * 60 + sec;
+                const text = line.replace(timeExp, '').trim();
+                result.push({ time, text });
+            }
+        }
+        return result;
+    }
+    const lyricsArr = parseLRC(lrc);
+    const lyricsBox = document.getElementById('lyrics-box');
+    // 渲染歌词
+    lyricsBox.innerHTML = lyricsArr.map((l, i) => `<p data-idx=\"${i}\" style=\"margin:0;\">${l.text}</p>`).join('');
+    // 歌词滚动与高亮
+    audio.addEventListener('timeupdate', () => {
+        const cur = audio.currentTime;
+        let idx = 0;
+        for (let i = 0; i < lyricsArr.length; i++) {
+            if (cur >= lyricsArr[i].time) idx = i;
+        }
+        lyricsBox.querySelectorAll('p').forEach((p, i) => {
+            if (i === idx) {
+                p.style.color = '#1a237e';
+                p.style.fontWeight = 'bold';
+                p.style.background = 'rgba(255,255,255,0.3)';
+                p.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            } else {
+                p.style.color = '';
+                p.style.fontWeight = '';
+                p.style.background = '';
+            }
+        });
+    });
+    // 点击歌词跳转到对应时间
+    lyricsBox.querySelectorAll('p').forEach((p, i) => {
+        p.style.cursor = 'pointer';
+        p.addEventListener('click', () => {
+            audio.currentTime = lyricsArr[i].time;
+        });
+    });
+
+    // Apple Music风格逐字歌词动画
+    const lyricText = `"A friend to all is a friend to none\nAnd when I felt like I was an old cardigan\nUnder someone's bed\nYou put me on and said I was your favorite"`;
+    const lyricAnim = document.getElementById('lyric-anim');
+    let idx = 0;
+    function showLyricChar() {
+        if (idx <= lyricText.length) {
+            lyricAnim.innerHTML = lyricText.slice(0, idx)
+                .replace(/\n/g, '<br>') +
+                '<span style="opacity:0.4;">'+(lyricText[idx] ? lyricText[idx] : '')+'</span>';
+            idx++;
+            setTimeout(showLyricChar, lyricText[idx-1]==='\n'? 350 : 38);
+        }
+    }
+    showLyricChar();
+
+    // 语言文本对象
+    const translations = {
+        zh: {
+            home: '首页',
+            photos: '官方照片',
+            videos: '视频作品',
+            music: '音乐作品',
+            products: '热销商品',
+            followMe: 'Follow me',
+            photosTitle: '官方照片',
+            filterAll: '全部',
+            filterStreet: '街拍',
+            filterAlbum: '专辑',
+            filterTour: '巡演',
+            albumText: '专辑',
+            streetText: '街拍',
+            tourText: '巡演',
+            videosTitle: '视频作品',
+            musicTitle: '音乐作品',
+            moreMusic: '更多音乐',
+            nowPlaying: '正在播放',
+            footerFollow: 'Follow Me',
+            tsOfficial: 'TS官链',
+            copyright: '© 2025 TayRep All Rights Reserved.<br>',
+            store: '商店'
+        },
+        en: {
+            home: 'Home',
+            photos: 'Photos',
+            videos: 'Videos',
+            music: 'Music',
+            products: 'Products',
+            followMe: 'Follow me',
+            photosTitle: 'Official Photos',
+            filterAll: 'All',
+            filterStreet: 'Street',
+            filterAlbum: 'Album',
+            filterTour: 'Tour',
+            albumText: 'Album',
+            streetText: 'Street',
+            tourText: 'Tour',
+            videosTitle: 'Videos',
+            musicTitle: 'Music',
+            moreMusic: 'More Music',
+            nowPlaying: 'Now Playing',
+            footerFollow: 'Follow Me',
+            tsOfficial: 'TS Official',
+            copyright: '© 2025 TayRep All Rights Reserved.<br>',
+            store: 'Store'
+        },
+        ja: {
+            home: 'ホーム',
+            photos: '写真',
+            videos: '動画',
+            music: '音楽',
+            products: '商品',
+            followMe: 'フォロー',
+            photosTitle: '公式写真',
+            filterAll: 'すべて',
+            filterStreet: 'ストリート',
+            filterAlbum: 'アルバム',
+            filterTour: 'ツアー',
+            albumText: 'アルバム',
+            streetText: 'ストリート',
+            tourText: 'ツアー',
+            videosTitle: '動画作品',
+            musicTitle: '音楽作品',
+            moreMusic: 'もっと音楽',
+            nowPlaying: '再生中',
+            footerFollow: 'フォロー',
+            tsOfficial: 'TS公式',
+            copyright: '© 2025 TayRep 全著作権所有.<br>',
+            store: 'ストア'
+        },
+        ko: {
+            home: '홈',
+            photos: '사진',
+            videos: '비디오',
+            music: '음악',
+            products: '제품',
+            followMe: '팔로우',
+            photosTitle: '공식 사진',
+            filterAll: '전체',
+            filterStreet: '스트리트',
+            filterAlbum: '앨범',
+            filterTour: '투어',
+            albumText: '앨범',
+            streetText: '스트리트',
+            tourText: '투어',
+            videosTitle: '비디오 작품',
+            musicTitle: '음악 작품',
+            moreMusic: '더 많은 음악',
+            nowPlaying: '재생 중',
+            footerFollow: '팔로우',
+            tsOfficial: 'TS 공식',
+            copyright: '© 2025 TayRep 모든 권리 보유.<br>',
+            store: '상점'
+        }
+    };
+
+    // 切换语言函数
+    function changeLanguage(lang) {
+        // 保存语言选择
+        localStorage.setItem('selectedLanguage', lang);
+        
+        // 更新导航项文本
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            if (translations[lang] && translations[lang][key]) {
+                element.textContent = translations[lang][key];
+            }
+        });
+    }
+
+    // 为每个语言选项添加点击事件
+    document.querySelectorAll('.dropdown-item[data-lang]').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const lang = e.target.getAttribute('data-lang');
+            changeLanguage(lang);
+        });
+    });
+
+    // 页面加载时检查并应用已保存的语言设置
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedLang = localStorage.getItem('selectedLanguage') || 'zh';
+        changeLanguage(savedLang);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+name = "taylor-swift-forum"
+main = "server.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+MONGODB_URI = "mongodb://localhost:27017/taylor-forum"
+JWT_SECRET = "your-secret-key-change-this-in-production"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "taylor-forum-db"
+database_id = "your-database-id" 

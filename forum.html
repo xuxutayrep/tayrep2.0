@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taylor Swift Club - 论坛</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            background: #f5f3ee;
+            color: #6e6259;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .forum-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .forum-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+        
+        .forum-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .topic-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .topic-item {
+            border-bottom: 1px solid #eee;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .topic-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .topic-content {
+            flex: 1;
+        }
+        
+        .topic-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .topic-meta {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .topic-stats {
+            text-align: right;
+            color: #666;
+        }
+        
+        .new-topic-btn {
+            background: #bfa14a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        
+        .new-topic-btn:hover {
+            background: #a88c3d;
+            transform: translateY(-2px);
+        }
+        
+        .forum-nav {
+            margin-bottom: 2rem;
+        }
+        
+        .forum-nav .nav-link {
+            color: #6e6259;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        
+        .forum-nav .nav-link:hover,
+        .forum-nav .nav-link.active {
+            background: #bfa14a;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Taylor Swift Club</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="forum.html">论坛</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <button class="btn btn-outline-primary me-2" id="loginBtn">登录</button>
+                    <button class="btn btn-primary" id="registerBtn">注册</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 论坛主体 -->
+    <div class="forum-container">
+        <!-- 论坛导航 -->
+        <div class="forum-nav">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">全部主题</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">最新动态</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">热门讨论</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">精华帖子</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 发帖按钮 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4>论坛主题</h4>
+            <button class="new-topic-btn" id="newTopicBtn">
+                <i class="fas fa-plus"></i> 发布新主题
+            </button>
+        </div>
+
+        <!-- 主题列表 -->
+        <div class="forum-card">
+            <ul class="topic-list">
+                <li class="topic-item">
+                    <img src="https://via.placeholder.com/48" class="topic-avatar" alt="用户头像">
+                    <div class="topic-content">
+                        <h5 class="topic-title">Taylor新专辑《苦难诗社》讨论</h5>
+                        <div class="topic-meta">
+                            <span class="author">作者: Swiftie</span> •
+                            <span class="time">2小时前</span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">
+                        <div>浏览: 1.2k</div>
+                        <div>回复: 48</div>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <img src="https://via.placeholder.com/48" class="topic-avatar" alt="用户头像">
+                    <div class="topic-content">
+                        <h5 class="topic-title">Eras Tour 演唱会体验分享</h5>
+                        <div class="topic-meta">
+                            <span class="author">作者: TaylorFan</span> •
+                            <span class="time">5小时前</span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">
+                        <div>浏览: 856</div>
+                        <div>回复: 32</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 分页 -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">上一页</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">下一页</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- 发布新主题模态框 -->
+    <div class="modal fade" id="newTopicModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">发布新主题</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newTopicForm">
+                        <div class="mb-3">
+                            <label for="topicTitle" class="form-label">主题标题</label>
+                            <input type="text" class="form-control" id="topicTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="topicContent" class="form-label">主题内容</label>
+                            <textarea class="form-control" id="topicContent" rows="5" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="submitTopic">发布</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 显示发布主题模态框
+        document.getElementById('newTopicBtn').addEventListener('click', function() {
+            const modal = new bootstrap.Modal(document.getElementById('newTopicModal'));
+            modal.show();
+        });
+
+        // 处理主题提交
+        document.getElementById('submitTopic').addEventListener('click', function() {
+            const title = document.getElementById('topicTitle').value;
+            const content = document.getElementById('topicContent').value;
+            
+            if (!title || !content) {
+                alert('请填写完整的主题信息');
+                return;
+            }
+
+            // TODO: 发送到服务器的逻辑
+            alert('主题发布成功！');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('newTopicModal'));
+            modal.hide();
+        });
+    </script>
+</body>
+</html>

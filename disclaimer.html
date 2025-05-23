@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>免责声明 - TayRep</title>
+    <!-- 引入 Bootstrap 和 Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- 引入手写风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        /* 全局变量 */
+        :root {
+            --primary-color: #2c3e50; /* 品牌色 - 深蓝 */
+            --bg-color: #f8f9fa;
+        }
+
+        /* 通用样式 */
+        body {
+            background: #f5f3ee;
+            color: #6e6259;
+            font-family: 'Roboto', sans-serif;
+            transition: background 0.5s;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            left: 0; top: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+            background: url('https://www.transparenttextures.com/patterns/noise.png');
+        }
+        .container, .section-padding, nav, footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background-color: rgba(255,255,255,0.7);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            justify-content: center !important;
+        }
+        @font-face {
+            font-family: 'Somer';
+            src: url('Somer.ttf') format('truetype');
+            font-display: swap;
+        }
+        .navbar .navbar-brand {
+            margin: 0 auto;
+            font-family: 'Somer', cursive, 'Roboto', sans-serif !important;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+        .navbar .container {
+            position: relative;
+        }
+
+        /* 内容区域 */
+        .disclaimer-content {
+            background: rgba(255,255,255,0.7);
+            border-radius: 24px;
+            box-shadow: 0 4px 32px 0 rgba(140, 140, 200, 0.10);
+            backdrop-filter: blur(2px);
+            padding: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .disclaimer-content h1 {
+            color: #bfa14a;
+            font-family: 'Somer', cursive, 'Roboto', sans-serif;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .disclaimer-content h2 {
+            color: #bfa14a;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .disclaimer-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .back-btn {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .back-btn a {
+            color: #bfa14a;
+            text-decoration: none;
+            border: 1px solid #bfa14a;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .back-btn a:hover {
+            background-color: rgba(191, 161, 74, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- ====== 导航栏 ====== -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container position-relative d-flex align-items-center">
+            <a class="navbar-brand" href="index.html">TayRep</a>
+        </div>
+    </nav>
+
+    <!-- ====== 免责声明内容 ====== -->
+    <div class="container">
+        <div class="disclaimer-content">
+            <!-- 在head部分添加 -->
+            <script>
+            // 语言文本对象
+            // 修改4：扩展translations对象，添加所有文本的翻译
+            const translations = {
+                zh: {
+                    disclaimerTitle: '免责声明',
+                    backToHome: '返回首页',
+                    intro: '本网站（以下简称 "本站"）所提供的泰勒・斯威夫特（Taylor Swift）相关图片、视频、音乐等资源（以下简称 "相关资源"）'
+                },
+                en: {
+                    disclaimerTitle: 'Disclaimer',
+                    backToHome: 'Back to Home'
+                    // 添加更多需要翻译的文本
+                },
+                ja: {
+                    disclaimerTitle: '免責事項',
+                    backToHome: 'ホームに戻る'
+                    // 添加更多需要翻译的文本
+                },
+                ko: {
+                    disclaimerTitle: '면책 조항',
+                    backToHome: '홈으로 돌아가기'
+                    // 添加更多需要翻译的文本
+                }
+            };
+            
+            // 切换语言函数
+            function changeLanguage(lang) {
+                localStorage.setItem('selectedLanguage', lang);
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translations[lang] && translations[lang][key]) {
+                        element.textContent = translations[lang][key];
+                    }
+                });
+            }
+            
+            // 页面加载时应用保存的语言设置
+            document.addEventListener('DOMContentLoaded', function() {
+                const savedLang = localStorage.getItem('selectedLanguage') || 'zh';
+                changeLanguage(savedLang);
+            });
+            </script>
+            
+            <!-- 在标题部分添加data-i18n属性 -->
+            <h1 data-i18n="disclaimerTitle">免责声明</h1>
+            <!-- 删除这一行 -->
+            <!-- <a href="index.html" data-i18n="backToHome"><i class="fas fa-arrow-left me-2"></i>返回首页</a> -->
+            <!-- 删除多余的</div>标签 -->
+            
+            <!-- 修改3：为所有段落和标题添加data-i18n属性 -->
+            <p data-i18n="intro">本网站（以下简称 "本站"）所提供的泰勒・斯威夫特（Taylor Swift）相关图片、视频、音乐等资源（以下简称 "相关资源"），均来源于互联网公开渠道或用户自主上传分享。为明确版权归属及使用责任，特作出如下声明：</p>
+            
+            <h2 data-i18n="copyrightTitle">一、版权归属声明</h2>
+            <p data-i18n="copyright1">本站明确知晓并尊重相关资源的知识产权，所有资源的版权归原版权所有人（包括但不限于唱片公司、影视制作机构、摄影师及泰勒・斯威夫特本人）所有。本站仅作为网络信息存储空间服务提供者，对资源本身不享有任何著作权或邻接权。</p>
+            <p data-i18n="copyright2">本站展示的相关资源，仅供用户个人学习、研究或欣赏使用，不用于任何商业目的。若您通过本站获取相关资源，应在下载后 24 小时内删除，不得进行复制、传播、修改、汇编或用于其他营利活动。</p>
+            
+            <!-- 继续为其他段落和标题添加data-i18n属性 -->
+            <h2>二、侵权处理条款</h2>
+            <p>如任何第三方（包括但不限于版权所有人或其授权代表）认为本站内容侵犯其合法权益，请立即通过本站提供的联系方式（邮箱：charles410123@outlook.com ）与我们取得联系，并提供以下文件：</p>
+            <p>版权所有人的身份证明（如营业执照、著作权登记证书、授权委托书等）；</p>
+            <p>明确的侵权内容链接及侵权理由；</p>
+            <p>要求删除或断开链接的具体主张。</p>
+            <p>本站收到符合上述要求的通知后，将立即采取包括但不限于删除资源、断开链接等必要措施以避免侵权。</p>
+            
+            <h2>三、责任免除条款</h2>
+            <p>本站无法完全控制第三方资源的合法性及真实性，亦不对资源的准确性、完整性、时效性或适用性承担任何保证责任。因使用本站资源而产生的一切风险（包括但不限于版权纠纷、设备损坏、数据丢失等），由用户自行承担。</p>
+            <p>若因版权方主张权利或其他不可抗力因素导致本站相关资源被删除或无法访问，本站不承担任何赔偿责任。用户应自行负责备份个人数据，本站对用户因数据丢失造成的损失不承担责任。</p>
+            <p>本站仅提供资源存储服务，对用户通过本站链接访问的第三方网站（如有）不承担任何控制或责任，亦不对第三方网站的内容、广告、产品或服务负责。</p>
+            
+            <h2>四、其他条款</h2>
+            <p>本声明的解释及适用均受中华人民共和国法律管辖。如发生争议，双方应通过友好协商解决；协商不成的，任何一方均有权向本站所在地有管辖权的人民法院提起诉讼。</p>
+            <p>本站有权根据法律法规变化或运营需要对本声明进行修改，修改后的声明将在本站公布后生效。请您定期查看本声明，若您继续使用本站服务，即视为同意接受修改后的条款。</p>
+            <p>特别提醒：尊重知识产权是每一位互联网用户的义务，请您在使用相关资源时严格遵守版权法律法规。如您并非相关资源的合法权利人或未获得合法授权，请勿进行任何可能侵犯版权的行为。</p>
+            
+            <p class="text-end">TayRep声明日期：2025 年 5 月 1 日</p>
+            
+            <!-- 修改第205行，添加data-i18n属性 -->
+            <div class="back-btn">
+                <a href="index.html" data-i18n="backToHome"><i class="fas fa-arrow-left me-2"></i>返回首页</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== 底部版权信息 ====== -->
+    <footer class="bg-white p-4">
+        <div class="container text-center">
+            <div class="mt-2" style="color:#aaa; font-size: 15px;">
+                © 2025 TayRep All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript 引入 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

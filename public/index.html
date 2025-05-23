@@ -1,0 +1,89 @@
+<script>
+    // 根据环境确定 API 基础 URL
+    const API_BASE_URL = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3007'
+        : 'https://api.你的域名.com'; // 这里需要替换为你的 API 域名
+
+    // ... existing code ...
+
+    // 加载最新专辑信息
+    async function loadLatestAlbum() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/albums/latest`);
+            if (!response.ok) {
+                throw new Error('获取专辑信息失败');
+            }
+            
+            const album = await response.json();
+            const albumSection = document.getElementById('latest-album');
+            
+            if (album) {
+                albumSection.innerHTML = `
+                    <div class="container">
+                        <h2 class="text-center mb-4">最新专辑</h2>
+                        <div class="row justify-content-center">
+                            <div class="col-md-8 text-center">
+                                <div class="card mb-4">
+                                    <img src="${API_BASE_URL}${album.coverUrl}" class="img-fluid" alt="${album.title}">
+                                    <div class="card-body">
+                                        <h3 class="card-title">${album.title}</h3>
+                                        <p class="card-text">${album.description}</p>
+                                        <a href="#music" class="btn" style="background-color: #bfa14a; color: white;">立即收听</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('加载最新专辑失败:', error);
+        }
+    }
+
+    // 加载官方照片
+    async function loadOfficialPhotos() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/photos`);
+            if (!response.ok) {
+                throw new Error('获取照片失败');
+            }
+            
+            const photos = await response.json();
+            const photosContainer = document.querySelector('#photos .row');
+            
+            if (photos && photos.length > 0) {
+                const photosByCategory = {
+                    street: photos.filter(p => p.category === 'street'),
+                    album: photos.filter(p => p.category === 'album'),
+                    tour: photos.filter(p => p.category === 'tour')
+                };
+
+                // 为每个分类显示最新的照片
+                Object.entries(photosByCategory).forEach(([category, categoryPhotos]) => {
+                    if (categoryPhotos.length > 0) {
+                        const latestPhoto = categoryPhotos[0];
+                        const photoElement = document.querySelector(`[data-filter="${category}"]`);
+                        if (photoElement) {
+                            const img = photoElement.querySelector('img');
+                            if (img) {
+                                img.src = `${API_BASE_URL}${latestPhoto.url}`;
+                            }
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('加载官方照片失败:', error);
+        }
+    }
+
+    // 页面加载时加载内容
+    document.addEventListener('DOMContentLoaded', () => {
+        loadLatestAlbum();
+        loadOfficialPhotos();
+        // ... 其他现有的 DOMContentLoaded 事件处理程序 ...
+    });
+</script>
+</body>
+</html> 

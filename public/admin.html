@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaylorSwiftClub 管理后台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background: #fff;
+        }
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .nav-link {
+            color: #333;
+            padding: 0.5rem 1rem;
+        }
+        .nav-link.active {
+            color: #007bff;
+            background-color: #f8f9fa;
+        }
+        .main-content {
+            margin-left: 240px;
+            padding: 2rem;
+        }
+        .form-image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+        <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-section="dashboard">
+                        <i class="fas fa-home me-2"></i>
+                        控制台
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="latest-album">
+                        <i class="fas fa-compact-disc me-2"></i>
+                        最新专辑
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="photos">
+                        <i class="fas fa-images me-2"></i>
+                        官方照片
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="forum">
+                        <i class="fas fa-comments me-2"></i>
+                        论坛管理
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容区 -->
+    <main class="main-content">
+        <!-- 控制台 -->
+        <div class="content-section" id="dashboard">
+            <h2>控制台</h2>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">论坛统计</h5>
+                            <p class="card-text">总帖子数：<span id="total-posts">0</span></p>
+                            <p class="card-text">总评论数：<span id="total-comments">0</span></p>
+                            <p class="card-text">总用户数：<span id="total-users">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 最新专辑 -->
+        <div class="content-section d-none" id="latest-album">
+            <h2>最新专辑管理</h2>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <form id="album-form">
+                        <div class="mb-3">
+                            <label class="form-label">专辑标题</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">专辑描述</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">专辑封面</label>
+                            <input type="file" class="form-control" name="cover" accept="image/*" required>
+                            <img id="album-preview" class="form-image-preview d-none">
+                        </div>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 官方照片 -->
+        <div class="content-section d-none" id="photos">
+            <h2>官方照片管理</h2>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <form id="photo-form">
+                        <div class="mb-3">
+                            <label class="form-label">照片分类</label>
+                            <select class="form-select" name="category" required>
+                                <option value="street">街拍</option>
+                                <option value="album">专辑</option>
+                                <option value="tour">巡演</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">上传照片</label>
+                            <input type="file" class="form-control" name="photos" multiple accept="image/*" required>
+                            <div id="photos-preview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">上传</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">已上传的照片</h5>
+                    <div class="row" id="photos-gallery"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 论坛管理 -->
+        <div class="content-section d-none" id="forum">
+            <h2>论坛管理</h2>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#topics">主题管理</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#comments">评论管理</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#users">用户管理</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="topics">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>标题</th>
+                                            <th>作者</th>
+                                            <th>发布时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="topics-list"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="comments">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>内容</th>
+                                            <th>作者</th>
+                                            <th>发布时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="comments-list"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="users">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>用户名</th>
+                                            <th>注册时间</th>
+                                            <th>角色</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="users-list"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 根据环境确定 API 基础 URL
+        const API_BASE_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3007'
+            : 'https://api.你的域名.com'; // 这里需要替换为你的 API 域名
+
+        // 检查登录状态和管理员权限
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (!response.ok || data.role !== 'admin') {
+                    alert('您没有管理员权限');
+                    window.location.href = '/index.html';
+                }
+            } catch (error) {
+                console.error('验证失败:', error);
+                window.location.href = '/index.html';
+            }
+        }
+
+        // 页面加载时检查权限
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadStats();
+            loadUsers();
+            loadPosts();
+            loadComments();
+        });
+
+        // 侧边栏导航
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                // 移除所有active类
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                // 添加active类到当前点击的链接
+                e.target.classList.add('active');
+                
+                // 隐藏所有内容区域
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.add('d-none');
+                });
+                
+                // 显示对应的内容区域
+                const sectionId = e.target.getAttribute('data-section');
+                document.getElementById(sectionId).classList.remove('d-none');
+            });
+        });
+
+        // 图片预览功能
+        document.querySelector('input[name="cover"]')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('album-preview');
+                    preview.src = e.target.result;
+                    preview.classList.remove('d-none');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 多图片预览
+        document.querySelector('input[name="photos"]')?.addEventListener('change', function(e) {
+            const previewContainer = document.getElementById('photos-preview');
+            previewContainer.innerHTML = '';
+            
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('form-image-preview');
+                    previewContainer.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // 获取统计数据
+        async function loadStats() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/api/admin/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                
+                document.getElementById('total-posts').textContent = data.postsCount;
+                document.getElementById('total-comments').textContent = data.commentsCount;
+                document.getElementById('total-users').textContent = data.usersCount;
+            } catch (error) {
+                console.error('获取统计数据失败:', error);
+            }
+        }
+
+        // 加载用户列表
+        async function loadUsers() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const users = await response.json();
+
+                const tbody = document.getElementById('users-list');
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${user.username}</td>
+                        <td>${new Date(user.createdAt).toLocaleString()}</td>
+                        <td>${user.role || '用户'}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')">
+                                删除
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('加载用户列表失败:', error);
+            }
+        }
+
+        // 删除用户
+        async function deleteUser(userId) {
+            if (!confirm('确定要删除这个用户吗？')) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('用户已删除');
+                    loadUsers();
+                    loadStats();
+                } else {
+                    const error = await response.json();
+                    alert(error.msg || '删除失败');
+                }
+            } catch (error) {
+                console.error('删除用户失败:', error);
+                alert('删除失败');
+            }
+        }
+
+        // 加载帖子列表
+        async function loadPosts() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/api/admin/posts`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const posts = await response.json();
+
+                const tbody = document.getElementById('topics-list');
+                tbody.innerHTML = posts.map(post => `
+                    <tr>
+                        <td>${post.title}</td>
+                        <td>${post.author}</td>
+                        <td>${new Date(post.createdAt).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deletePost('${post.id}')">
+                                删除
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('加载帖子列表失败:', error);
+            }
+        }
+
+        // 删除帖子
+        async function deletePost(postId) {
+            if (!confirm('确定要删除这个帖子吗？相关的评论也会被删除。')) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/api/admin/posts/${postId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('帖子已删除');
+                    loadPosts();
+                    loadComments();
+                    loadStats();
+                } else {
+                    const error = await response.json();
+                    alert(error.msg || '删除失败');
+                }
+            } catch (error) {
+                console.error('删除帖子失败:', error);
+                alert('删除失败');
+            }
+        }
+
+        // 加载评论列表
+        async function loadComments() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/api/admin/comments`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const comments = await response.json();
+
+                const tbody = document.getElementById('comments-list');
+                tbody.innerHTML = comments.map(comment => `
+                    <tr>
+                        <td>${comment.content}</td>
+                        <td>${comment.author}</td>
+                        <td>${new Date(comment.createdAt).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteComment('${comment.id}')">
+                                删除
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('加载评论列表失败:', error);
+            }
+        }
+
+        // 删除评论
+        async function deleteComment(commentId) {
+            if (!confirm('确定要删除这条评论吗？')) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/api/admin/comments/${commentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('评论已删除');
+                    loadComments();
+                    loadStats();
+                } else {
+                    const error = await response.json();
+                    alert(error.msg || '删除失败');
+                }
+            } catch (error) {
+                console.error('删除评论失败:', error);
+                alert('删除失败');
+            }
+        }
+
+        // 专辑表单提交
+        document.getElementById('album-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const formData = new FormData(this);
+            const coverFile = formData.get('cover');
+
+            try {
+                let coverBase64 = '';
+                if (coverFile) {
+                    coverBase64 = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(coverFile);
+                    });
+                }
+
+                const response = await fetch(`${API_BASE_URL}/api/admin/album`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        title: formData.get('title'),
+                        description: formData.get('description'),
+                        coverBase64
+                    })
+                });
+
+                if (response.ok) {
+                    alert('专辑信息保存成功');
+                    this.reset();
+                    document.getElementById('album-preview').classList.add('d-none');
+                    // 更新首页的专辑信息
+                    window.opener?.location.reload();
+                } else {
+                    const error = await response.json();
+                    alert(error.msg || '保存失败');
+                }
+            } catch (error) {
+                console.error('保存专辑信息失败:', error);
+                alert('保存失败');
+            }
+        });
+
+        // 照片表单提交
+        document.getElementById('photo-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const formData = new FormData(this);
+            const files = formData.getAll('photos');
+            const category = formData.get('category');
+
+            if (files.length === 0) {
+                alert('请选择要上传的照片');
+                return;
+            }
+
+            // 显示上传进度
+            const progressDiv = document.createElement('div');
+            progressDiv.className = 'progress mt-3';
+            progressDiv.innerHTML = `
+                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" 
+                     style="width: 0%">
+                    0%
+                </div>
+            `;
+            this.appendChild(progressDiv);
+
+            try {
+                const photos = await Promise.all(
+                    Array.from(files).map(file => 
+                        new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve(reader.result);
+                            reader.readAsDataURL(file);
+                        })
+                    )
+                );
+
+                // 更新进度条
+                const progressBar = progressDiv.querySelector('.progress-bar');
+                const updateProgress = (percent) => {
+                    progressBar.style.width = `${percent}%`;
+                    progressBar.textContent = `${percent}%`;
+                };
+
+                const response = await fetch(`${API_BASE_URL}/api/admin/photos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        category,
+                        photos
+                    })
+                });
+
+                if (response.ok) {
+                    updateProgress(100);
+                    setTimeout(() => {
+                        alert('照片上传成功');
+                        this.reset();
+                        document.getElementById('photos-preview').innerHTML = '';
+                        progressDiv.remove();
+                        // 更新首页的照片展示
+                        window.opener?.location.reload();
+                    }, 500);
+                } else {
+                    const error = await response.json();
+                    alert(error.msg || '上传失败');
+                    progressDiv.remove();
+                }
+            } catch (error) {
+                console.error('上传照片失败:', error);
+                alert('上传失败');
+                progressDiv.remove();
+            }
+        });
+    </script>
+</body>
+</html> 

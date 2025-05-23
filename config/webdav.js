@@ -11,18 +11,39 @@ const webdavClient = createClient(process.env.WEBDAV_URL, {
 // 确保必要的目录存在
 async function initializeWebDAV() {
     try {
-        // 创建用户目录
-        if (!await webdavClient.exists('/users')) {
-            await webdavClient.createDirectory('/users');
+        // 基础目录
+        const directories = [
+            '/',           // 根目录
+            '/users',
+            '/posts',
+            '/comments',
+            '/albums',
+            '/albums/data',
+            '/albums/covers',
+            '/photos',
+            '/photos/street',
+            '/photos/album',
+            '/photos/tour'
+        ];
+
+        // 按照层级顺序创建目录
+        for (const dir of directories) {
+            try {
+                if (!await webdavClient.exists(dir)) {
+                    await webdavClient.createDirectory(dir);
+                    console.log(`Created directory: ${dir}`);
+                } else {
+                    console.log(`Directory already exists: ${dir}`);
+                }
+            } catch (error) {
+                // 如果是根目录，忽略错误（因为它可能已经存在）
+                if (dir !== '/') {
+                    console.error(`Error creating directory ${dir}:`, error.message);
+                }
+                continue;
+            }
         }
-        // 创建帖子目录
-        if (!await webdavClient.exists('/posts')) {
-            await webdavClient.createDirectory('/posts');
-        }
-        // 创建评论目录
-        if (!await webdavClient.exists('/comments')) {
-            await webdavClient.createDirectory('/comments');
-        }
+
         console.log('WebDAV directories initialized successfully');
     } catch (error) {
         console.error('Error initializing WebDAV directories:', error);
@@ -104,8 +125,14 @@ async function getPostComments(postId) {
     return comments.sort((a, b) => a.createdAt - b.createdAt);
 }
 
+// WebDAV 客户端导出
+const WebDAVClient = async () => {
+    return webdavClient;
+};
+
 export {
     initializeWebDAV,
+    WebDAVClient,
     saveUser,
     getUser,
     savePost,

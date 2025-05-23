@@ -3,23 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>Taylor Swift Club</title>
-    <!-- 主样式 -->
-   
-    <style>
-        /* 全局变量 */
-        :root {
-            --primary-color: #2c3e50; 
-=======
     <title>TayRep</title>
     <!-- 主样式 -->
-    <!-- 在<style>标签内添加或修改以下CSS样式 -->
     <style>
         /* 全局变量 */
         :root {
             --primary-color: #2c3e50; /* 品牌色 - 深蓝 */
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
             --bg-color: #f8f9fa;
         }
 
@@ -60,16 +49,16 @@
 
         /* 导航栏 */
         .navbar {
-            background-color: rgba(255,255,255,0.9); /* 增加不透明度 */
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* 增强阴影效果 */
+            background-color: rgba(255,255,255,0.9);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             justify-content: center !important;
-            border-radius: 12px; /* 添加圆角 */
-            margin: 10px 20px; /* 添加外边距 */
-            backdrop-filter: blur(10px); /* 添加模糊效果 */
+            border-radius: 12px;
+            margin: 10px 20px;
+            backdrop-filter: blur(10px);
             position: sticky;
-            top: 10px; /* 距离顶部有一定距离 */
+            top: 10px;
             z-index: 1000;
-            transition: all 0.3s ease; /* 添加过渡效果 */
+            transition: all 0.3s ease;
         }
 
         /* 添加悬停效果 */
@@ -514,6 +503,20 @@
         border-left: none;
         padding-left: 0;
     }
+    
+    #music .container.d-flex {
+        flex-direction: column !important;
+        gap: 2rem;
+    }
+    #music .col-md-6, #music .music-player {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 1.5rem;
+    }
+    #music .music-player {
+        border-left: none;
+        padding-left: 0;
+    }
 }
         @media (max-width: 768px) {
             #music .container.d-flex {
@@ -545,11 +548,7 @@
 <div class="container">
   <nav class="navbar navbar-expand-lg navbar-light sticky-top">
     <div class="container position-relative d-flex align-items-center">
-<<<<<<< HEAD
-      <a class="navbar-brand" href="#">Taylor Swift Club</a>
-=======
       <a class="navbar-brand" href="#">TayRep</a>
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -574,12 +573,9 @@
             <a class="nav-link" href="store.html" data-i18n="store" target="_blank">商店</a>
           </li>
           <li class="nav-item">
-<<<<<<< HEAD
             <a class="nav-link" href="forum.html">论坛</a>
           </li>
           <li class="nav-item">
-=======
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
             <a class="nav-link" href="#footer" data-i18n="followMe">Follow me</a>
           </li>
         </ul>
@@ -691,11 +687,7 @@
             <div class="col-6 col-lg-3 mb-4"> <!-- 修改：手机端2列，电脑端4列 -->
                 <div class="card h-100" data-filter="all"> 
                     <a href="https://www.123865.com/s/8C85Vv-BbqAH" target="_blank"> 
-<<<<<<< HEAD
-                        <img src="更多g.png" class="card-img-top" alt="更多">
-=======
                         <img src="更多.png" class="card-img-top" alt="更多">
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
                     </a>
                     <div class="card-body p-2">
                         <h6>更多</h6> 
@@ -847,11 +839,7 @@
             <a href="#" style="color:#bfa14a;font-weight:bold;">TS官链</a>
         </div>
         <div class="mt-2" style="color:#aaa; font-size: 15px;">
-<<<<<<< HEAD
-            2025 TayRep All Rights Reserved.
-=======
             © 2025 TayRep All Rights Reserved.
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
         </div>
         <div class="mt-1">
             <a href="disclaimer.html" style="color:#aaa; font-size: 14px;">免责声明</a>
@@ -892,7 +880,6 @@
           navbar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
         }
       });
-<<<<<<< HEAD
       
       // 解决手机端导航栏展开时与赞赏按钮重叠的问题
       const navbarCollapse = document.getElementById('navbarNav');
@@ -932,8 +919,6 @@
           }
         }
       });
-=======
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
     });
 
     // 官方照片筛选功能
@@ -1226,11 +1211,7 @@
             nowPlaying: '正在播放',
             footerFollow: 'Follow Me',
             tsOfficial: 'TS官链',
-<<<<<<< HEAD
-            copyright: '2025 TayRep All Rights Reserved.',
-=======
-            copyright: '© 2025 TayRep All Rights Reserved.<br>',
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
+            copyright: '© 2025 TayRep All Rights Reserved.',
             store: '商店'
         },
         en: {
@@ -1254,11 +1235,7 @@
             nowPlaying: 'Now Playing',
             footerFollow: 'Follow Me',
             tsOfficial: 'TS Official',
-<<<<<<< HEAD
-            copyright: '2025 TayRep All Rights Reserved.',
-=======
-            copyright: '© 2025 TayRep All Rights Reserved.<br>',
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
+            copyright: '© 2025 TayRep All Rights Reserved.',
             store: 'Store'
         },
         ja: {
@@ -1282,11 +1259,7 @@
             nowPlaying: '再生中',
             footerFollow: 'フォロー',
             tsOfficial: 'TS公式',
-<<<<<<< HEAD
-            copyright: '2025 TayRep 全著作権所有.',
-=======
-            copyright: '© 2025 TayRep 全著作権所有.<br>',
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
+            copyright: '© 2025 TayRep 全著作権所有.',
             store: 'ストア'
         },
         ko: {
@@ -1310,11 +1283,7 @@
             nowPlaying: '재생 중',
             footerFollow: '팔로우',
             tsOfficial: 'TS 공식',
-<<<<<<< HEAD
-            copyright: '2025 TayRep 모든 권리 보유.',
-=======
-            copyright: '© 2025 TayRep 모든 권리 보유.<br>',
->>>>>>> 3f5489a346f147354dbb1016b0c6aa5d94a10356
+            copyright: '© 2025 TayRep 모든 권리 보유.',
             store: '상점'
         }
     };

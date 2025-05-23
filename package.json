@@ -2,6 +2,7 @@
   "name": "taylor-swift-club-forum",
   "version": "1.0.0",
   "description": "Taylor Swift Club论坛",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -19,7 +20,9 @@
     "express-validator": "^7.0.1",
     "@cloudflare/workers-types": "^4.20240208.0",
     "itty-router": "^3.0.12",
-    "@cloudflare/kv-asset-handler": "^0.3.0"
+    "@cloudflare/kv-asset-handler": "^0.3.0",
+    "webdav": "^5.5.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",

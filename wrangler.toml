@@ -3,10 +3,13 @@ main = "server.js"
 compatibility_date = "2024-01-01"
 
 [vars]
-MONGODB_URI = "mongodb://localhost:27017/taylor-forum"
+WEBDAV_URL = "http://localhost:8080/webdav"
+WEBDAV_USERNAME = "admin"
+WEBDAV_PASSWORD = "your-webdav-password"
 JWT_SECRET = "your-secret-key-change-this-in-production"
 
-[[d1_databases]]
-binding = "DB"
-database_name = "taylor-forum-db"
-database_id = "your-database-id" 
+# 移除不需要的数据库配置
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "taylor-forum-db"
+# database_id = "your-database-id" 

@@ -1,106 +1,93 @@
-const express = require('express');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { body, validationResult } from 'express-validator';
+import { saveUser, getUser } from '../config/webdav.js';
+
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { check, validationResult } = require('express-validator');
-const User = require('../models/User');
 
 // 注册路由
 router.post('/register', [
-  check('username', '用户名至少需要3个字符').isLength({ min: 3 }),
-  check('email', '请提供有效的邮箱').isEmail(),
-  check('password', '密码至少需要6个字符').isLength({ min: 6 })
+    body('username').trim().isLength({ min: 3 }).withMessage('用户名至少需要3个字符'),
+    body('password').isLength({ min: 6 }).withMessage('密码至少需要6个字符')
 ], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    try {
+        // 验证输入
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { username, password } = req.body;
+
+        // 检查用户是否已存在
+        const existingUser = await getUser(username);
+        if (existingUser) {
+            return res.status(400).json({ message: '用户名已存在' });
+        }
+
+        // 加密密码
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // 创建新用户
+        const newUser = {
+            username,
+            password: hashedPassword,
+            createdAt: Date.now()
+        };
+
+        // 保存用户
+        await saveUser(newUser);
+
+        res.status(201).json({ message: '注册成功' });
+    } catch (error) {
+        console.error('注册错误:', error);
+        res.status(500).json({ message: '服务器错误' });
     }
-
-    const { username, email, password } = req.body;
-
-    // 检查用户是否已存在
-    let user = await User.findOne({ $or: [{ email }, { username }] });
-    if (user) {
-      return res.status(400).json({ message: '用户名或邮箱已被注册' });
-    }
-
-    // 创建新用户
-    user = new User({
-      username,
-      email,
-      password
-    });
-
-    await user.save();
-
-    // 生成JWT
-    const token = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        avatar: user.avatar
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: '服务器错误' });
-  }
 });
 
 // 登录路由
 router.post('/login', [
-  check('username', '请输入用户名').exists(),
-  check('password', '请输入密码').exists()
+    body('username').trim().notEmpty().withMessage('请输入用户名'),
+    body('password').notEmpty().withMessage('请输入密码')
 ], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    try {
+        // 验证输入
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { username, password } = req.body;
+
+        // 获取用户
+        const user = await getUser(username);
+        if (!user) {
+            return res.status(400).json({ message: '用户名或密码错误' });
+        }
+
+        // 验证密码
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: '用户名或密码错误' });
+        }
+
+        // 创建 JWT
+        const token = jwt.sign(
+            { username: user.username },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            token,
+            username: user.username
+        });
+    } catch (error) {
+        console.error('登录错误:', error);
+        res.status(500).json({ message: '服务器错误' });
     }
-
-    const { username, password } = req.body;
-
-    // 查找用户
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(400).json({ message: '用户名或密码错误' });
-    }
-
-    // 验证密码
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: '用户名或密码错误' });
-    }
-
-    // 生成JWT
-    const token = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        avatar: user.avatar
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: '服务器错误' });
-  }
 });
 
-module.exports = router; 
+export default router; 
